@@ -21,10 +21,10 @@ Distributed, event-driven automation platform for the Mars IoT simulator. It ing
 ## Repo Structure
 ```
 .
-??? input.md
-??? Student_doc.md
-??? booklets/
-??? source/
+├── input.md
+├── Student_doc.md
+├── booklets/
+└── source/
 ```
 
 ## Notes
