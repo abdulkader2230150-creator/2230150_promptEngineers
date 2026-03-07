@@ -1,0 +1,89 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  simulator:
+    image: mars-iot-simulator:multiarch_v1
+    container_name: mars-iot-simulator
+    ports:
+      - "8080:8080"
+
+  ingestion-service:
+    build: ./ingestion-service
+    container_name: ingestion-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      SIMULATOR_BASE_URL: http://simulator:8080
+    depends_on:
+      - rabbitmq
+
+  telemetry-ingestion-service:
+    build: ./telemetry-ingestion-service
+    container_name: telemetry-ingestion-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      SIMULATOR_BASE_URL: http://simulator:8080
+    depends_on:
+      - rabbitmq
+
+  normalizer-service:
+    build: ./normalizer-service
+    container_name: normalizer-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+
+  debug-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile.debug-consumer
+    container_name: debug-consumer
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+
+  state-service:
+    build: ./state-service
+    container_name: state-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - rabbitmq
+
+  rule-engine-service:
+    build: ./rule-engine-service
+    volumes:
+      - ./shared-data:/data
+    container_name: rule-engine-service
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      SIMULATOR_BASE_URL: http://simulator:8080
+    depends_on:
+      - rabbitmq
+
+  backend-api:
+    build: ./backend-api
+    volumes:
+      - ./shared-data:/data
+    container_name: backend-api
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      SIMULATOR_BASE_URL: http://simulator:8080
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+
+  frontend:
+    build: ./frontendstate-servic/frontendstate-servic/frontend
+    container_name: mars-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend-api
