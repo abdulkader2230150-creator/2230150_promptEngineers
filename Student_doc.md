@@ -47,11 +47,11 @@ None.
 ### MICROSERVICES:
 
 #### MICROSERVICE: mars-iot-simulator
-TYPE: external
-DESCRIPTION: Simulator providing REST sensors, telemetry streams, and actuator endpoints.
-PORTS: 8080
-TECHNOLOGICAL SPECIFICATION: Provided Docker image (mars-iot-simulator:multiarch_v1).
-SERVICE ARCHITECTURE: External black-box service with REST and SSE interfaces.
+- TYPE: external
+- DESCRIPTION: Simulator providing REST sensors, telemetry streams, and actuator endpoints.
+- PORTS: 8080
+- TECHNOLOGICAL SPECIFICATION: Provided Docker image (mars-iot-simulator:multiarch_v1).
+- SERVICE ARCHITECTURE: External black-box service with REST and SSE interfaces.
 
 ## CONTAINER_NAME: RabbitMQ
 
@@ -77,11 +77,11 @@ All internal services connect to RabbitMQ over AMQP.
 ### MICROSERVICES:
 
 #### MICROSERVICE: rabbitmq
-TYPE: middleware
-DESCRIPTION: AMQP broker used for internal messaging.
-PORTS: 5672, 15672
-TECHNOLOGICAL SPECIFICATION: rabbitmq:3-management container.
-SERVICE ARCHITECTURE: Message broker with queues and fanout exchange.
+- TYPE: middleware
+- DESCRIPTION: AMQP broker used for internal messaging.
+- PORTS: 5672, 15672
+- TECHNOLOGICAL SPECIFICATION: rabbitmq:3-management container.
+- SERVICE ARCHITECTURE: Message broker with queues and fanout exchange.
 
 ## CONTAINER_NAME: ingestion-service
 
@@ -106,11 +106,11 @@ Simulator (REST), RabbitMQ (AMQP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: ingestion-service
-TYPE: backend worker
-DESCRIPTION: REST polling and publishing of raw messages.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, requests, pika.
-SERVICE ARCHITECTURE: Single-file producer with periodic polling loop.
+- TYPE: backend worker
+- DESCRIPTION: REST polling and publishing of raw messages.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, requests, pika.
+- SERVICE ARCHITECTURE: Single-file producer with periodic polling loop.
 
 ## CONTAINER_NAME: telemetry-ingestion-service
 
@@ -135,11 +135,11 @@ Simulator (SSE), RabbitMQ (AMQP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: telemetry-ingestion-service
-TYPE: backend worker
-DESCRIPTION: SSE client and raw message publisher.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, requests (streaming), pika.
-SERVICE ARCHITECTURE: Threaded SSE consumers, one per topic.
+- TYPE: backend worker
+- DESCRIPTION: SSE client and raw message publisher.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, requests (streaming), pika.
+- SERVICE ARCHITECTURE: Threaded SSE consumers, one per topic.
 
 ## CONTAINER_NAME: normalizer-service
 
@@ -164,11 +164,11 @@ RabbitMQ (AMQP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: normalizer-service
-TYPE: backend worker
-DESCRIPTION: Message normalization pipeline.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
-SERVICE ARCHITECTURE: Consumer + dispatcher functions for each schema family.
+- TYPE: backend worker
+- DESCRIPTION: Message normalization pipeline.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
+- SERVICE ARCHITECTURE: Consumer + dispatcher functions for each schema family.
 
 ## CONTAINER_NAME: rule-engine-service
 
@@ -193,15 +193,15 @@ RabbitMQ (AMQP), Simulator (REST actuators), SQLite shared volume.
 ### MICROSERVICES:
 
 #### MICROSERVICE: rule-engine
-TYPE: backend worker
-DESCRIPTION: Rule evaluation and actuator trigger service.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, pika, requests, sqlite3.
-SERVICE ARCHITECTURE: Consumer with rule evaluation and HTTP actuator calls.
+- TYPE: backend worker
+- DESCRIPTION: Rule evaluation and actuator trigger service.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, pika, requests, sqlite3.
+- SERVICE ARCHITECTURE: Consumer with rule evaluation and HTTP actuator calls.
 
-DB STRUCTURE:
+- DB STRUCTURE:
 
-**rules** : | rule_id | source_name | metric | operator | threshold_value | actuator_name | target_state |
+  **rules** : | rule_id | source_name | metric | operator | threshold_value | actuator_name | target_state |
 
 ## CONTAINER_NAME: state-service
 
@@ -226,11 +226,11 @@ RabbitMQ (AMQP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: state-service
-TYPE: backend worker
-DESCRIPTION: Latest state cache updated by normalized events.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
-SERVICE ARCHITECTURE: Consumer updating an in-memory dictionary.
+- TYPE: backend worker
+- DESCRIPTION: Latest state cache updated by normalized events.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
+- SERVICE ARCHITECTURE: Consumer updating an in-memory dictionary.
 
 ## CONTAINER_NAME: backend-api
 
@@ -255,28 +255,28 @@ RabbitMQ (AMQP), Simulator (REST actuators), SQLite shared volume.
 ### MICROSERVICES:
 
 #### MICROSERVICE: backend-api
-TYPE: backend
-DESCRIPTION: FastAPI service for rules, state, and actuators.
-PORTS: 8000
-TECHNOLOGICAL SPECIFICATION: Python 3.11, FastAPI, uvicorn, pika, requests, sqlite3.
-SERVICE ARCHITECTURE: FastAPI app with background RabbitMQ consumer thread and SQLite access layer.
+- TYPE: backend
+- DESCRIPTION: FastAPI service for rules, state, and actuators.
+- PORTS: 8000
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, FastAPI, uvicorn, pika, requests, sqlite3.
+- SERVICE ARCHITECTURE: FastAPI app with background RabbitMQ consumer thread and SQLite access layer.
 
-ENDPOINTS:
+- ENDPOINTS:
 
-| HTTP METHOD | URL | Description | User Stories |
-| ----------- | --- | ----------- | ------------ |
-| GET | /health | Health check | 1 |
-| GET | /state | Latest state snapshot | 1, 7 |
-| GET | /api/state | Latest state snapshot (alias) | 1, 7 |
-| GET | /rules | List rules | 12 |
-| POST | /rules | Create rule | 11 |
-| DELETE | /rules/{rule_id} | Delete rule | 13 |
-| GET | /actuators | List actuator states | 4 |
-| POST | /actuators/{actuator_name} | Set actuator state | 2, 8 |
+  | HTTP METHOD | URL | Description | User Stories |
+  | ----------- | --- | ----------- | ------------ |
+  | GET | /health | Health check | 1 |
+  | GET | /state | Latest state snapshot | 1, 7 |
+  | GET | /api/state | Latest state snapshot (alias) | 1, 7 |
+  | GET | /rules | List rules | 12 |
+  | POST | /rules | Create rule | 11 |
+  | DELETE | /rules/{rule_id} | Delete rule | 13 |
+  | GET | /actuators | List actuator states | 4 |
+  | POST | /actuators/{actuator_name} | Set actuator state | 2, 8 |
 
-DB STRUCTURE:
+- DB STRUCTURE:
 
-**rules** : | rule_id | source_name | metric | operator | threshold_value | actuator_name | target_state |
+  **rules** : | rule_id | source_name | metric | operator | threshold_value | actuator_name | target_state |
 
 ## CONTAINER_NAME: debug-consumer
 
@@ -301,11 +301,11 @@ RabbitMQ (AMQP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: debug-consumer
-TYPE: backend worker
-DESCRIPTION: Logging consumer for debugging.
-PORTS: None
-TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
-SERVICE ARCHITECTURE: Simple consumer printing messages.
+- TYPE: backend worker
+- DESCRIPTION: Logging consumer for debugging.
+- PORTS: None
+- TECHNOLOGICAL SPECIFICATION: Python 3.11, pika.
+- SERVICE ARCHITECTURE: Simple consumer printing messages.
 
 ## CONTAINER_NAME: frontend
 
@@ -330,14 +330,14 @@ Backend API (HTTP).
 ### MICROSERVICES:
 
 #### MICROSERVICE: frontend
-TYPE: frontend
-DESCRIPTION: React SPA for monitoring and rule management.
-PORTS: 8081
-TECHNOLOGICAL SPECIFICATION: React, Vite, TypeScript, Tailwind CSS, shadcn/ui.
-SERVICE ARCHITECTURE: SPA with hooks for state polling and UI components for dashboard widgets.
+- TYPE: frontend
+- DESCRIPTION: React SPA for monitoring and rule management.
+- PORTS: 8081
+- TECHNOLOGICAL SPECIFICATION: React, Vite, TypeScript, Tailwind CSS, shadcn/ui.
+- SERVICE ARCHITECTURE: SPA with hooks for state polling and UI components for dashboard widgets.
 
-PAGES:
+- PAGES:
 
-| Name | Description | Related Microservice | User Stories |
-| ---- | ----------- | -------------------- | ------------ |
-| / (Dashboard) | Real-time dashboard with sensors, telemetry, actuators, and rules | backend-api | 1, 3, 4, 7, 8, 9, 10, 11, 12, 13 |
+  | Name | Description | Related Microservice | User Stories |
+  | ---- | ----------- | -------------------- | ------------ |
+  | / (Dashboard) | Real-time dashboard with sensors, telemetry, actuators, and rules | backend-api | 1, 3, 4, 7, 8, 9, 10, 11, 12, 13 |
