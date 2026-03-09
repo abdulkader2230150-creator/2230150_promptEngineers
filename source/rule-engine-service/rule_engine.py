@@ -105,7 +105,8 @@ def callback(ch, method, properties, body):
 
 def main():
     db.init_db()
-    db.seed_demo_rules()
+    if os.getenv("SEED_DEMO_RULES", "false").lower() == "true":
+        db.seed_demo_rules()
 
     connection = connect_to_rabbitmq()
     channel = connection.channel()
