@@ -13,7 +13,7 @@ MarsOps is a distributed platform designed to manage critical Martian habitat in
 7. As an Operator, I want to see the "latest state" of a sensor instantly when I open the dashboard, so I don't have to wait for the next update.
 8. As an Operator, I want to manually toggle actuators (e.g., cooling_fan) ON or OFF from the UI to override automation in emergencies.
 9. As an Operator, I want to see a live line chart for specific sensors (e.g., CO2 levels) to track trends while the dashboard is open.
-10. As an Operator, I want sensors to be visually grouped by type (e.g., "Power Bus" vs. "Life Support") and view their data according to this grouping for better organization.
+10. As an Operator, I want sensors to be visually grouped by type and view their data according to this grouping for better organization.
 11. As an Operator, I want to create automation rules (e.g., "IF temp > 28 THEN fan ON") via the UI to maintain habitat stability.
 12. As an Operator, I want to view a list of all active automation rules so that I know what logic is currently running.
 13. As an Operator, I want to delete a rule that is no longer needed to prevent conflicting habitat commands.
